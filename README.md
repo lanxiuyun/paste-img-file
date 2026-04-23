@@ -33,7 +33,7 @@ Pasted Image YYYY-MM-DD HH-MM-SS.png
 
 ### 方式一：直接使用可执行文件
 
-1. 前往 [Releases](https://github.com/lanxiuyun/paste-img-file/releases) 下载可执行文件
+1. 前往 [Releases](https://github.com/lanxiuyun/PasteDrop/releases) 下载可执行文件
 2. 运行后保持程序驻留
 3. 在桌面或资源管理器中复制一张图片，然后按 `Ctrl+V`
 
