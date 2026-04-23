@@ -98,8 +98,7 @@ python pastedrop.py
 - `Received WM_APP_PASTE_IMAGE`
 - `Resolved save directory`
 
-## 名称说明
+## Bug
+- 复制文件到剪贴板后，无法粘贴
+- 企业微信复制的图片，无法粘贴成文件
 
-项目对外名称统一为 `PasteDrop`。
-
-仓库名你可以在 GitHub 上单独调整；仓库内的脚本、构建配置、启动脚本和产物名称已经按 `PasteDrop` 对齐。
