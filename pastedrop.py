@@ -1,5 +1,7 @@
 import ctypes
+import io
 import os
+import struct
 import time
 from dataclasses import dataclass
 from datetime import datetime
@@ -10,6 +12,7 @@ from ctypes import wintypes
 from loguru import logger
 import pythoncom
 import win32com.client
+import win32clipboard
 import win32gui
 import win32process
 from PIL import Image, ImageGrab
@@ -384,11 +387,109 @@ def grab_clipboard_image() -> Image.Image | None:
     try:
         data = ImageGrab.grabclipboard()
     except Exception:
-        return None
+        data = None
 
     if isinstance(data, Image.Image):
         return data
+    return grab_clipboard_image_from_win32()
+
+
+def get_dib_image_offset(dib_data: bytes) -> int:
+    if len(dib_data) < 16:
+        raise ValueError("DIB data is too short.")
+
+    header_size = struct.unpack_from("<I", dib_data, 0)[0]
+    bit_count = struct.unpack_from("<H", dib_data, 14)[0]
+    compression = struct.unpack_from("<I", dib_data, 16)[0]
+    colors_used = 0
+    if header_size >= 36 and len(dib_data) >= 36:
+        colors_used = struct.unpack_from("<I", dib_data, 32)[0]
+
+    offset = header_size
+    if bit_count <= 8:
+        palette_entries = colors_used or (1 << bit_count)
+        offset += palette_entries * 4
+    elif compression == 3:
+        if header_size == 40:
+            offset += 12
+        elif header_size >= 52:
+            offset += 16
+    return offset
+
+
+def image_from_dib(dib_data: bytes) -> Image.Image | None:
+    if not dib_data:
+        return None
+
+    try:
+        pixel_offset = get_dib_image_offset(dib_data)
+        file_size = 14 + len(dib_data)
+        bmp_header = struct.pack(
+            "<2sIHHI",
+            b"BM",
+            file_size,
+            0,
+            0,
+            14 + pixel_offset,
+        )
+        image = Image.open(io.BytesIO(bmp_header + dib_data))
+        image.load()
+        return image
+    except Exception as exc:
+        logger.debug(f"Failed to decode DIB clipboard image: {exc}")
+        return None
+
+
+def grab_clipboard_image_from_win32() -> Image.Image | None:
+    png_format = win32clipboard.RegisterClipboardFormat("PNG")
+    formats = [
+        png_format,
+        win32clipboard.CF_DIB,
+        getattr(win32clipboard, "CF_DIBV5", 17),
+    ]
+
+    try:
+        win32clipboard.OpenClipboard()
+    except Exception as exc:
+        logger.debug(f"Failed to open clipboard: {exc}")
+        return None
+
+    try:
+        for clipboard_format in formats:
+            try:
+                if not win32clipboard.IsClipboardFormatAvailable(clipboard_format):
+                    continue
+                data = win32clipboard.GetClipboardData(clipboard_format)
+            except Exception as exc:
+                logger.debug(
+                    f"Failed to read clipboard format {clipboard_format}: {exc}"
+                )
+                continue
+
+            if not data:
+                continue
+
+            try:
+                if clipboard_format == png_format:
+                    image = Image.open(io.BytesIO(data))
+                    image.load()
+                    return image
+                image = image_from_dib(data)
+                if image is not None:
+                    return image
+            except Exception as exc:
+                logger.debug(
+                    f"Failed to decode clipboard format {clipboard_format}: {exc}"
+                )
+                continue
+    finally:
+        win32clipboard.CloseClipboard()
+
     return None
+
+
+def clipboard_has_image() -> bool:
+    return grab_clipboard_image() is not None
 
 
 def build_output_path(directory: Path) -> Path:
@@ -451,6 +552,8 @@ def send_ctrl_v() -> None:
 
 def should_intercept_paste(candidates: set[int]) -> bool:
     if not candidates:
+        return False
+    if not clipboard_has_image():
         return False
     for hwnd in candidates:
         class_name = get_window_class_name(hwnd)

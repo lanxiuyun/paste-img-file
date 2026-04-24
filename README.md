@@ -35,7 +35,7 @@ Pasted Image YYYY-MM-DD HH-MM-SS.png
 
 1. 前往 [Releases](https://github.com/lanxiuyun/PasteDrop/releases) 下载可执行文件
 2. 运行后保持程序驻留
-3. 在桌面或资源管理器中复制一张图片，然后按 `Ctrl+V`
+3. 用任意软件截图，然后在桌面按 `Ctrl+V`
 
 如果你希望开机自动可用，可以把可执行文件放到 Windows 启动目录：
 
@@ -98,8 +98,9 @@ python pastedrop.py
 - `Received WM_APP_PASTE_IMAGE`
 - `Resolved save directory`
 
-## 名称说明
+## Bug
+- 如果你怎么按ctrl+v，粘贴不出来，那大概率不是你操作错了，而是这软件还有 bug...
 
-项目对外名称统一为 `PasteDrop`。
-
-仓库名你可以在 GitHub 上单独调整；仓库内的脚本、构建配置、启动脚本和产物名称已经按 `PasteDrop` 对齐。
+## 已修复的bug
+- 复制文件到剪贴板后，无法粘贴
+- 企业微信复制的图片，无法粘贴成文件
