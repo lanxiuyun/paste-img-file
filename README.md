@@ -1,5 +1,7 @@
 # PasteDrop
 
+English README: [README_EN.md](README_EN.md)
+
 把剪贴板里的图片，直接贴成文件。
 
 `PasteDrop` 是一个面向 Windows 的轻量小工具：当你在桌面或资源管理器里按下 `Ctrl+V` 时，如果剪贴板中是图片，它不会像平时那样“什么都没发生”，而是会立刻在当前位置生成一个 PNG 文件。
