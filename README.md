@@ -8,7 +8,7 @@
 
 ## 演示视频
 
-<video src=".readme/Video_2026-04-24_194819.mp4" controls muted playsinline></video>
+![PasteDrop Demo](.readme/demo.gif)
 
 ## 为什么值得用
 
