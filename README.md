@@ -105,7 +105,7 @@ python pastedrop.py
 - `Resolved save directory`
 
 ## Bug
-- 如果你怎么按ctrl+v，粘贴不出来，那大概率不是你操作错了，而是这软件还有 bug...
+- 如果无论你怎么按ctrl+v，都粘贴不出来，那大概率是这软件还有 bug...
 
 ## 已修复的bug
 - 复制文件到剪贴板后，无法粘贴
