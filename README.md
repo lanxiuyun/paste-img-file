@@ -40,7 +40,7 @@ Pasted Image YYYY-MM-DD HH-MM-SS.png
 ### 方式一：直接使用可执行文件
 
 1. 前往 [Releases](https://github.com/lanxiuyun/PasteDrop/releases) 下载可执行文件
-2. 运行后保持程序驻留
+2. 运行后就会在后台自动监听了（如果想退出，要用任务管理器杀掉）
 3. 用任意软件截图，然后在桌面按 `Ctrl+V`
 
 如果你希望开机自动可用，可以把可执行文件放到 Windows 启动目录：
